@@ -1,0 +1,40 @@
+const Book = require('../models/book');
+let books = []; 
+
+
+exports.createBook = (req, res) => {
+    const { id, title, ISBN, publishedDate, author } = req.body;
+    const newBook = new Book(id, title, ISBN, publishedDate, author);
+    books.push(newBook);
+    res.status(201).send(newBook);
+};
+
+exports.getAllBooks = (req, res) => {
+    res.status(200).send(books);
+};
+
+exports.getBook = (req, res) => {
+    const book = books.find(b => b.id === parseInt(req.params.id));
+    if (!book) return res.status(404).send('The book with the given ID was not found.');
+    res.send(book);
+};
+
+exports.updateBook = (req, res) => {
+    const book = books.find(b => b.id === parseInt(req.params.id));
+    if (!book) return res.status(404).send('The book with the given ID was not found.');
+
+    const { title, ISBN, publishedDate, author } = req.body;
+    book.title = title;
+    book.ISBN = ISBN;
+    book.publishedDate = publishedDate;
+    book.author = author;
+    res.send(book);
+};
+
+exports.deleteBook = (req, res) => {
+    const bookIndex = books.findIndex(b => b.id === parseInt(req.params.id));
+    if (bookIndex === -1) return res.status(404).send('The book with the given ID was not found.');
+
+    books.splice(bookIndex, 1);
+    res.status(204).send();
+};
